@@ -1,15 +1,18 @@
-// Orders page logic
+// Orders page logic with pagination
 let currentLeads = [];
 let currentFilter = 'all';
 let currentSearch = '';
+let currentPage = 1;
+let itemsPerPage = 10;
+let totalPages = 1;
 
 // Загрузка и отображение заявок
 function loadLeads() {
     currentLeads = CRM.getLeads();
-    renderLeadsTable();
+    applyFiltersAndRender();
 }
 
-function renderLeadsTable() {
+function applyFiltersAndRender() {
     let filtered = [...currentLeads];
     
     // Фильтр по статусу
@@ -26,17 +29,35 @@ function renderLeadsTable() {
         );
     }
     
-    const tbody = document.getElementById('leads-table-body');
+    // Сортируем по дате (новые сверху)
+    filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     
-    if (filtered.length === 0) {
+    // Пагинация
+    totalPages = Math.ceil(filtered.length / itemsPerPage);
+    if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const paginatedLeads = filtered.slice(start, end);
+    
+    renderLeadsTable(paginatedLeads, filtered.length, start, end);
+    renderPagination(filtered.length);
+}
+
+function renderLeadsTable(leads, totalCount, start, end) {
+    const tbody = document.getElementById('leads-table-body');
+    const products = CRM.getProducts();
+    
+    // Обновляем информацию о количестве
+    document.getElementById('pagination-start').textContent = totalCount === 0 ? 0 : start + 1;
+    document.getElementById('pagination-end').textContent = Math.min(end, totalCount);
+    document.getElementById('pagination-total').textContent = totalCount;
+    
+    if (leads.length === 0) {
         tbody.innerHTML = '<tr><td colspan="10">Нет заявок</td></tr>';
         return;
     }
     
-    const products = CRM.getProducts();
-    
-    tbody.innerHTML = filtered.map(lead => {
-        // Формируем список товаров для отображения
+    tbody.innerHTML = leads.map(lead => {
         const leadProducts = lead.products || [];
         const productsText = leadProducts.map(p => {
             const product = products.find(pr => pr.id == p.id);
@@ -70,6 +91,67 @@ function renderLeadsTable() {
     }).join('');
 }
 
+function renderPagination(totalCount) {
+    const pageNumbersDiv = document.getElementById('page-numbers');
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    
+    if (totalCount === 0) {
+        pageNumbersDiv.innerHTML = '';
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        return;
+    }
+    
+    prevBtn.disabled = (currentPage === 1);
+    nextBtn.disabled = (currentPage === totalPages);
+    
+    // Показываем максимум 5 номеров страниц
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, currentPage + 2);
+    
+    if (endPage - startPage < 4) {
+        if (startPage === 1) endPage = Math.min(totalPages, startPage + 4);
+        if (endPage === totalPages) startPage = Math.max(1, endPage - 4);
+    }
+    
+    let pagesHtml = '';
+    if (startPage > 1) {
+        pagesHtml += `<button class="btn btn-outline btn-sm" onclick="goToPage(1)">1</button>`;
+        if (startPage > 2) pagesHtml += `<span style="padding: 0 4px;">...</span>`;
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        pagesHtml += `<button class="btn ${i === currentPage ? 'btn-primary' : 'btn-outline'} btn-sm" onclick="goToPage(${i})" style="min-width: 36px;">${i}</button>`;
+    }
+    
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) pagesHtml += `<span style="padding: 0 4px;">...</span>`;
+        pagesHtml += `<button class="btn btn-outline btn-sm" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+    }
+    
+    pageNumbersDiv.innerHTML = pagesHtml;
+}
+
+function goToPage(page) {
+    currentPage = page;
+    applyFiltersAndRender();
+}
+
+function changePage(delta) {
+    const newPage = currentPage + delta;
+    if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        applyFiltersAndRender();
+    }
+}
+
+function changePerPage() {
+    itemsPerPage = parseInt(document.getElementById('per-page-select').value);
+    currentPage = 1;
+    applyFiltersAndRender();
+}
+
 function getDeliveryText(method) {
     const map = { courier: 'Курьер', pickup: 'Самовывоз', post: 'Почта' };
     return map[method] || method || '—';
@@ -80,14 +162,12 @@ function getPaymentText(method) {
     return map[method] || method || '—';
 }
 
-// Обновление статуса
 function updateLeadStatus(id, newStatus) {
     CRM.updateLead(id, { status: newStatus });
     loadLeads();
     showToast(`Статус заявки #${id} обновлён`, 'success');
 }
 
-// Удаление заявки
 function deleteLead(id) {
     if (confirm('Удалить заявку? Это действие нельзя отменить.')) {
         CRM.deleteLead(id);
@@ -96,7 +176,6 @@ function deleteLead(id) {
     }
 }
 
-// Открытие модального окна для новой заявки
 function openLeadModal(lead = null) {
     const modal = document.getElementById('lead-modal');
     const modalTitle = document.getElementById('modal-title');
@@ -136,17 +215,17 @@ function openLeadModal(lead = null) {
             <div class="form-group">
                 <label>Способ доставки</label>
                 <select id="delivery_method">
-                    <option value="courier" ${lead?.delivery_method === 'courier' ? 'selected' : ''}>Курьером</option>
-                    <option value="pickup" ${lead?.delivery_method === 'pickup' ? 'selected' : ''}>Самовывоз</option>
-                    <option value="post" ${lead?.delivery_method === 'post' ? 'selected' : ''}>Почта России</option>
+                    ${(settings.delivery_methods || ['Курьером', 'Самовывоз', 'Почта']).map(m => `
+                        <option value="${m.toLowerCase().replace(/ /g, '_')}" ${lead?.delivery_method === m.toLowerCase().replace(/ /g, '_') ? 'selected' : ''}>${m}</option>
+                    `).join('')}
                 </select>
             </div>
             <div class="form-group">
                 <label>Способ оплаты</label>
                 <select id="payment_method">
-                    <option value="cash" ${lead?.payment_method === 'cash' ? 'selected' : ''}>Наличные</option>
-                    <option value="card" ${lead?.payment_method === 'card' ? 'selected' : ''}>Карта при получении</option>
-                    <option value="online" ${lead?.payment_method === 'online' ? 'selected' : ''}>Оплата на сайте</option>
+                    ${(settings.payment_methods || ['Наличные', 'Карта при получении', 'Оплата на сайте']).map(m => `
+                        <option value="${m.toLowerCase().replace(/ /g, '_')}" ${lead?.payment_method === m.toLowerCase().replace(/ /g, '_') ? 'selected' : ''}>${m}</option>
+                    `).join('')}
                 </select>
             </div>
             <div class="form-group">
@@ -225,7 +304,8 @@ function closeModal() {
 function filterLeads() {
     currentFilter = document.getElementById('status-filter').value;
     currentSearch = document.getElementById('search-input').value;
-    renderLeadsTable();
+    currentPage = 1;
+    applyFiltersAndRender();
 }
 
 function resetFilters() {
@@ -233,11 +313,11 @@ function resetFilters() {
     document.getElementById('search-input').value = '';
     currentFilter = 'all';
     currentSearch = '';
-    renderLeadsTable();
+    currentPage = 1;
+    applyFiltersAndRender();
 }
 
-function showToast(message, type = 'info') {
-    // Простое уведомление
+function showToast(message, type) {
     const toast = document.createElement('div');
     toast.textContent = message;
     toast.style.cssText = `
@@ -250,7 +330,7 @@ function showToast(message, type = 'info') {
 
 function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
+    return String(str).replace(/[&<>]/g, function(m) {
         if (m === '&') return '&amp;';
         if (m === '<') return '&lt;';
         if (m === '>') return '&gt;';
@@ -258,7 +338,6 @@ function escapeHtml(str) {
     });
 }
 
-// Добавляем стиль для анимации уведомлений
 const style = document.createElement('style');
 style.textContent = `
     @keyframes fadeInOut {
@@ -270,7 +349,6 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Загрузка при старте
 document.addEventListener('DOMContentLoaded', () => {
     loadLeads();
 });
