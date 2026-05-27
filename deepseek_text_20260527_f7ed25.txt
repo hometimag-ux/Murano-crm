@@ -1,0 +1,14 @@
+murano-crm/
+├── index.html          # Дашборд
+├── orders.html         # Заявки/лиды
+├── products.html       # Товары и категории
+├── settings.html       # Доставка, оплата, настройки
+├── css/
+│   └── crm.css         # Стили CRM
+├── js/
+│   ├── crm-core.js     # Ядро: работа с данными, единое хранилище
+│   ├── dashboard.js    # Дашборд
+│   ├── orders.js       # Логика заявок
+│   ├── products.js     # Логика товаров
+│   └── settings.js     # Настройки
+└── README.md
