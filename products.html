@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Murano CRM — Товары</title>
+    <link rel="stylesheet" href="css/crm.css">
+</head>
+<body>
+    <header class="crm-header">
+        <div class="logo">Murano CRM <span>управление магазином</span></div>
+        <nav class="crm-nav">
+            <a href="index.html" class="nav-link">📊 Дашборд</a>
+            <a href="orders.html" class="nav-link">📋 Заявки</a>
+            <a href="products.html" class="nav-link active">🏷️ Товары</a>
+            <a href="settings.html" class="nav-link">⚙️ Настройки</a>
+        </nav>
+    </header>
+    
+    <main class="crm-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h1>Товары</h1>
+            <button class="btn btn-primary" onclick="openProductModal()">+ Добавить товар</button>
+        </div>
+        
+        <!-- Фильтр по категориям -->
+        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
+            <select id="category-filter" class="btn btn-outline" style="padding: 8px 16px;" onchange="filterProducts()">
+                <option value="all">Все категории</option>
+            </select>
+            <input type="text" id="search-products" placeholder="🔍 Поиск товаров..." style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; width: 250px;" onkeyup="filterProducts()">
+            <button class="btn btn-outline" onclick="openCategoryModal()">📁 Управление категориями</button>
+        </div>
+        
+        <!-- Сетка товаров -->
+        <div id="products-grid" class="products-grid">
+            <!-- Товары будут вставлены через JS -->
+        </div>
+    </main>
+    
+    <!-- Модальное окно для товара -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="product-modal-title">Добавить товар</h3>
+                <span class="modal-close" onclick="closeProductModal()">&times;</span>
+            </div>
+            <div id="product-modal-body"></div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно для категорий -->
+    <div id="category-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Управление категориями</h3>
+                <span class="modal-close" onclick="closeCategoryModal()">&times;</span>
+            </div>
+            <div id="category-modal-body"></div>
+        </div>
+    </div>
+    
+    <script src="js/crm-core.js"></script>
+    <script src="js/products.js"></script>
+</body>
+</html>
