@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Murano CRM — Настройки</title>
+    <link rel="stylesheet" href="css/crm.css">
+</head>
+<body>
+    <header class="crm-header">
+        <div class="logo">Murano CRM <span>управление магазином</span></div>
+        <nav class="crm-nav">
+            <a href="index.html" class="nav-link">📊 Дашборд</a>
+            <a href="orders.html" class="nav-link">📋 Заявки</a>
+            <a href="products.html" class="nav-link">🏷️ Товары</a>
+            <a href="settings.html" class="nav-link active">⚙️ Настройки</a>
+        </nav>
+    </header>
+    
+    <main class="crm-container">
+        <h1 style="margin-bottom: 24px;">Настройки</h1>
+        
+        <!-- Способы доставки -->
+        <div class="settings-section">
+            <h3>🚚 Способы доставки</h3>
+            <div id="delivery-methods-list"></div>
+            <div style="display: flex; gap: 8px; margin-top: 16px;">
+                <input type="text" id="new-delivery" placeholder="Новый способ доставки" style="flex:1; padding: 10px; border:1px solid #ddd; border-radius:8px;">
+                <button class="btn btn-primary" onclick="addDeliveryMethod()">➕ Добавить</button>
+            </div>
+        </div>
+        
+        <!-- Способы оплаты -->
+        <div class="settings-section">
+            <h3>💳 Способы оплаты</h3>
+            <div id="payment-methods-list"></div>
+            <div style="display: flex; gap: 8px; margin-top: 16px;">
+                <input type="text" id="new-payment" placeholder="Новый способ оплаты" style="flex:1; padding: 10px; border:1px solid #ddd; border-radius:8px;">
+                <button class="btn btn-primary" onclick="addPaymentMethod()">➕ Добавить</button>
+            </div>
+        </div>
+        
+        <!-- Общие настройки -->
+        <div class="settings-section">
+            <h3>🌐 Основные настройки</h3>
+            <div class="form-group">
+                <label>Название CRM</label>
+                <input type="text" id="crm-name" class="form-control" style="width:100%; padding:10px;">
+            </div>
+            <div class="form-group">
+                <label>URL сайта (для интеграции)</label>
+                <input type="url" id="site-url" class="form-control" style="width:100%; padding:10px;" placeholder="https://...">
+            </div>
+            <button class="btn btn-primary" onclick="saveGeneralSettings()">💾 Сохранить настройки</button>
+        </div>
+        
+        <!-- Экспорт данных -->
+        <div class="settings-section">
+            <h3>📦 Резервное копирование</h3>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-outline" onclick="exportAllData()">⬇️ Экспортировать все данные (JSON)</button>
+                <label class="btn btn-outline" style="cursor: pointer;">
+                    📂 Импортировать данные
+                    <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importAllData(this)">
+                </label>
+                <button class="btn btn-danger" onclick="clearAllData()">⚠️ Очистить все данные</button>
+            </div>
+            <p style="font-size:12px; color:#999; margin-top:12px;">
+                Экспорт создаёт файл-резервную копию. Импорт восстановит данные из файла.
+            </p>
+        </div>
+    </main>
+    
+    <script src="js/crm-core.js"></script>
+    <script src="js/settings.js"></script>
+</body>
+</html>
