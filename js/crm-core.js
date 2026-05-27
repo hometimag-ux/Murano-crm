@@ -1,9 +1,7 @@
 // CRM Core v1.0 — работа с данными через localStorage
 const CRM = {
-    // Версия хранилища (при изменении структуры данных увеличивать)
     version: '1.0',
     
-    // Инициализация: создаём дефолтные данные, если их нет
     init: function() {
         if (!localStorage.getItem('crm_data')) {
             const defaultData = {
@@ -16,39 +14,38 @@ const CRM = {
                     { id: 1, title: 'Одежда', slug: 'clothing' },
                     { id: 2, title: 'Обувь', slug: 'shoes' }
                 ],
-                / Внутри init(), в defaultData.leads, обновите заявки:
-leads: [
-    { 
-        id: 1, 
-        client_name: 'Иван Петров', 
-        phone: '+7 (999) 123-45-67', 
-        email: 'ivan@example.com',
-        address: 'г. Москва, ул. Тверская, д. 10, кв. 5',
-        products: [{ id: 1, count: 2 }, { id: 2, count: 1 }],
-        status: 'new',
-        delivery_method: 'courier',
-        payment_method: 'card',
-        total: 1990*2 + 3990,
-        comment: 'Позвонить перед доставкой',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-    },
-    { 
-        id: 2, 
-        client_name: 'Мария Сидорова', 
-        phone: '+7 (888) 555-12-34', 
-        email: 'maria@example.com',
-        address: 'г. Санкт-Петербург, Невский пр., д. 25',
-        products: [{ id: 3, count: 1 }],
-        status: 'processing',
-        delivery_method: 'pickup',
-        payment_method: 'cash',
-        total: 2990,
-        comment: '',
-        created_at: new Date(Date.now() - 86400000).toISOString(),
-        updated_at: new Date(Date.now() - 86400000).toISOString()
-    }
-],
+                leads: [
+                    { 
+                        id: 1, 
+                        client_name: 'Иван Петров', 
+                        phone: '+7 (999) 123-45-67', 
+                        email: 'ivan@example.com',
+                        address: 'г. Москва, ул. Тверская, д. 10, кв. 5',
+                        products: [{ id: 1, count: 2 }, { id: 2, count: 1 }],
+                        status: 'new',
+                        delivery_method: 'courier',
+                        payment_method: 'card',
+                        total: 1990*2 + 3990,
+                        comment: 'Позвонить перед доставкой',
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    },
+                    { 
+                        id: 2, 
+                        client_name: 'Мария Сидорова', 
+                        phone: '+7 (888) 555-12-34', 
+                        email: 'maria@example.com',
+                        address: 'г. Санкт-Петербург, Невский пр., д. 25',
+                        products: [{ id: 3, count: 1 }],
+                        status: 'processing',
+                        delivery_method: 'pickup',
+                        payment_method: 'cash',
+                        total: 2990,
+                        comment: '',
+                        created_at: new Date(Date.now() - 86400000).toISOString(),
+                        updated_at: new Date(Date.now() - 86400000).toISOString()
+                    }
+                ],
                 settings: {
                     delivery_methods: ['Самовывоз', 'Курьером', 'Почта России'],
                     payment_methods: ['Наличные', 'Карта при получении', 'Оплата на сайте'],
@@ -59,23 +56,21 @@ leads: [
                     product: 4,
                     category: 3,
                     lead: 3
-                }
+                },
+                messages: {}
             };
             localStorage.setItem('crm_data', JSON.stringify(defaultData));
         }
     },
     
-    // Получить все данные
     getAll: function() {
         return JSON.parse(localStorage.getItem('crm_data'));
     },
     
-    // Сохранить все данные
     saveAll: function(data) {
         localStorage.setItem('crm_data', JSON.stringify(data));
     },
     
-    // --- Товары ---
     getProducts: function() {
         return this.getAll().products;
     },
@@ -108,7 +103,6 @@ leads: [
         this.saveAll(data);
     },
     
-    // --- Категории ---
     getCategories: function() {
         return this.getAll().categories;
     },
@@ -140,7 +134,6 @@ leads: [
         this.saveAll(data);
     },
     
-    // --- Заявки (лиды) ---
     getLeads: function() {
         return this.getAll().leads;
     },
@@ -151,7 +144,7 @@ leads: [
         lead.id = newId;
         lead.created_at = new Date().toISOString();
         lead.updated_at = new Date().toISOString();
-        data.leads.unshift(lead); // новые в начало
+        data.leads.unshift(lead);
         data.next_ids.lead = newId + 1;
         this.saveAll(data);
         return lead;
@@ -175,7 +168,6 @@ leads: [
         this.saveAll(data);
     },
     
-    // --- Настройки ---
     getSettings: function() {
         return this.getAll().settings;
     },
@@ -187,7 +179,6 @@ leads: [
         return data.settings;
     },
     
-    // --- Статистика для дашборда ---
     getStats: function() {
         const data = this.getAll();
         const leads = data.leads;
@@ -210,8 +201,5 @@ leads: [
     }
 };
 
-// Автоматическая инициализация
 CRM.init();
-
-// Экспорт для использования в других файлах
 window.CRM = CRM;
