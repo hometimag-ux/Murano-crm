@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Murano CRM — Заявки</title>
+    <link rel="stylesheet" href="css/crm.css">
+</head>
+<body>
+    <header class="crm-header">
+        <div class="logo">Murano CRM <span>управление магазином</span></div>
+        <nav class="crm-nav">
+            <a href="index.html" class="nav-link">📊 Дашборд</a>
+            <a href="orders.html" class="nav-link active">📋 Заявки</a>
+            <a href="products.html" class="nav-link">🏷️ Товары</a>
+            <a href="settings.html" class="nav-link">⚙️ Настройки</a>
+        </nav>
+    </header>
+    
+    <main class="crm-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h1>Заявки</h1>
+            <button class="btn btn-primary" onclick="openLeadModal()">+ Новая заявка</button>
+        </div>
+        
+        <!-- Фильтры -->
+        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+            <select id="status-filter" class="btn btn-outline" style="padding: 8px 16px;" onchange="filterLeads()">
+                <option value="all">Все статусы</option>
+                <option value="new">🆕 Новые</option>
+                <option value="processing">⏳ В обработке</option>
+                <option value="completed">✅ Завершённые</option>
+                <option value="cancelled">❌ Отменённые</option>
+            </select>
+            <input type="text" id="search-input" placeholder="🔍 Поиск по имени или телефону..." style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; width: 250px;" onkeyup="filterLeads()">
+            <button class="btn btn-outline" onclick="resetFilters()">Сбросить</button>
+        </div>
+        
+        <!-- Таблица заявок -->
+        <div class="table-wrapper">
+            <table style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Клиент</th>
+                        <th>Телефон</th>
+                        <th>Email</th>
+                        <th>Сумма</th>
+                        <th>Статус</th>
+                        <th>Доставка</th>
+                        <th>Оплата</th>
+                        <th>Дата</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="leads-table-body">
+                    <tr><td colspan="10">Загрузка...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    
+    <!-- Модальное окно для редактирования/добавления заявки -->
+    <div id="lead-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Новая заявка</h3>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modal-body">
+                <!-- Форма будет вставлена через JS -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/crm-core.js"></script>
+    <script src="js/orders.js"></script>
+</body>
+</html>
