@@ -16,36 +16,39 @@ const CRM = {
                     { id: 1, title: 'Одежда', slug: 'clothing' },
                     { id: 2, title: 'Обувь', slug: 'shoes' }
                 ],
-                leads: [
-                    { 
-                        id: 1, 
-                        client_name: 'Иван Петров', 
-                        phone: '+7 (999) 123-45-67', 
-                        email: 'ivan@example.com',
-                        products: [{ id: 1, count: 2 }, { id: 2, count: 1 }],
-                        status: 'new', // new, processing, completed, cancelled
-                        delivery_method: 'courier',
-                        payment_method: 'card',
-                        total: 1990*2 + 3990,
-                        comment: 'Позвонить перед доставкой',
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString()
-                    },
-                    { 
-                        id: 2, 
-                        client_name: 'Мария Сидорова', 
-                        phone: '+7 (888) 555-12-34', 
-                        email: 'maria@example.com',
-                        products: [{ id: 3, count: 1 }],
-                        status: 'processing',
-                        delivery_method: 'pickup',
-                        payment_method: 'cash',
-                        total: 2990,
-                        comment: '',
-                        created_at: new Date(Date.now() - 86400000).toISOString(),
-                        updated_at: new Date(Date.now() - 86400000).toISOString()
-                    }
-                ],
+                / Внутри init(), в defaultData.leads, обновите заявки:
+leads: [
+    { 
+        id: 1, 
+        client_name: 'Иван Петров', 
+        phone: '+7 (999) 123-45-67', 
+        email: 'ivan@example.com',
+        address: 'г. Москва, ул. Тверская, д. 10, кв. 5',
+        products: [{ id: 1, count: 2 }, { id: 2, count: 1 }],
+        status: 'new',
+        delivery_method: 'courier',
+        payment_method: 'card',
+        total: 1990*2 + 3990,
+        comment: 'Позвонить перед доставкой',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+    },
+    { 
+        id: 2, 
+        client_name: 'Мария Сидорова', 
+        phone: '+7 (888) 555-12-34', 
+        email: 'maria@example.com',
+        address: 'г. Санкт-Петербург, Невский пр., д. 25',
+        products: [{ id: 3, count: 1 }],
+        status: 'processing',
+        delivery_method: 'pickup',
+        payment_method: 'cash',
+        total: 2990,
+        comment: '',
+        created_at: new Date(Date.now() - 86400000).toISOString(),
+        updated_at: new Date(Date.now() - 86400000).toISOString()
+    }
+],
                 settings: {
                     delivery_methods: ['Самовывоз', 'Курьером', 'Почта России'],
                     payment_methods: ['Наличные', 'Карта при получении', 'Оплата на сайте'],
