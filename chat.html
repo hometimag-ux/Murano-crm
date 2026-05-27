@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Murano CRM — Чат с клиентами</title>
+    <link rel="stylesheet" href="css/crm.css">
+    <style>
+        /* Дополнительные стили для чата */
+        .chat-container {
+            display: flex;
+            gap: 24px;
+            height: calc(100vh - 140px);
+            min-height: 500px;
+        }
+        
+        /* Список клиентов */
+        .chat-clients {
+            width: 300px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-clients-header {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            background: #fafafa;
+        }
+        
+        .chat-clients-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        .chat-clients-search {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .chat-clients-search input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+        
+        .clients-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .client-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .client-item:hover {
+            background: #f8f9ff;
+        }
+        
+        .client-item.active {
+            background: #e3f2fd;
+            border-left: 3px solid #0066cc;
+        }
+        
+        .client-avatar {
+            width: 40px;
+            height: 40px;
+            background: #0066cc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .client-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .client-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .client-last-message {
+            font-size: 12px;
+            color: #999;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .client-unread {
+            background: #f44336;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        /* Область переписки */
+        .chat-messages-area {
+            flex: 1;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+            background: #fafafa;
+        }
+        
+        .chat-header .client-name {
+            font-size: 18px;
+            margin: 0;
+        }
+        
+        .chat-header .client-phone {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+        
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f8f9fa;
+        }
+        
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+        }
+        
+        .message.outgoing {
+            align-self: flex-end;
+        }
+        
+        .message.incoming {
+            align-self: flex-start;
+        }
+        
+        .message-bubble {
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+        
+        .message.outgoing .message-bubble {
+            background: #0066cc;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.incoming .message-bubble {
+            background: white;
+            border: 1px solid #e0e0e0;
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message-time {
+            font-size: 10px;
+            color: #999;
+            margin-top: 4px;
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+        
+        .chat-input-area {
+            padding: 16px 20px;
+            border-top: 1px solid #eee;
+            background: white;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            font-size: 14px;
+        }
+        
+        .chat-input-area button {
+            padding: 12px 24px;
+        }
+        
+        .empty-chat {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #999;
+            text-align: center;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header class="crm-header">
+        <div class="logo">Murano CRM <span>управление магазином</span></div>
+        <nav class="crm-nav">
+            <a href="index.html" class="nav-link">📊 Дашборд</a>
+            <a href="orders.html" class="nav-link">📋 Заявки</a>
+            <a href="products.html" class="nav-link">🏷️ Товары</a>
+            <a href="chat.html" class="nav-link active">💬 Чат</a>
+            <a href="settings.html" class="nav-link">⚙️ Настройки</a>
+        </nav>
+    </header>
+    
+    <main class="crm-container">
+        <h1 style="margin-bottom: 24px;">Чат с клиентами</h1>
+        
+        <div class="chat-container">
+            <!-- Левая панель: список клиентов -->
+            <div class="chat-clients">
+                <div class="chat-clients-header">
+                    <h3>Клиенты</h3>
+                </div>
+                <div class="chat-clients-search">
+                    <input type="text" id="client-search" placeholder="🔍 Поиск по имени или телефону..." onkeyup="filterClients()">
+                </div>
+                <div class="clients-list" id="clients-list">
+                    <div style="padding: 40px; text-align: center; color: #999;">Загрузка...</div>
+                </div>
+            </div>
+            
+            <!-- Правая панель: переписка -->
+            <div class="chat-messages-area">
+                <div id="chat-content">
+                    <div class="empty-chat">
+                        💬 Выберите клиента, чтобы начать диалог
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="js/crm-core.js"></script>
+    <script src="js/chat.js"></script>
+</body>
+</html>
