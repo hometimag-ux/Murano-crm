@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Murano CRM — Дашборд</title>
+    <link rel="stylesheet" href="css/crm.css">
+</head>
+<body>
+    <header class="crm-header">
+        <div class="logo">Murano CRM <span>управление магазином</span></div>
+        <nav class="crm-nav">
+            <a href="index.html" class="nav-link active">📊 Дашборд</a>
+            <a href="orders.html" class="nav-link">📋 Заявки</a>
+            <a href="products.html" class="nav-link">🏷️ Товары</a>
+            <a href="settings.html" class="nav-link">⚙️ Настройки</a>
+        </nav>
+    </header>
+    
+    <main class="crm-container">
+        <h1 style="margin-bottom: 24px;">Дашборд</h1>
+        
+        <div class="stats-grid" id="stats-grid">
+            <!-- Карточки будут вставлены через JS -->
+        </div>
+        
+        <div class="table-wrapper">
+            <h3 style="padding: 16px 16px 0;">Последние заявки</h3>
+            <table id="recent-leads">
+                <thead>
+                    <tr><th>Клиент</th><th>Телефон</th><th>Сумма</th><th>Статус</th><th>Дата</th></tr>
+                </thead>
+                <tbody id="recent-leads-body">
+                    <tr><td colspan="5">Загрузка...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    
+    <script src="js/crm-core.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
