@@ -19,7 +19,7 @@
     </header>
     
     <main class="crm-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
             <h1>Заявки</h1>
             <button class="btn btn-primary" onclick="openLeadModal()">+ Новая заявка</button>
         </div>
@@ -33,64 +33,64 @@
                 <option value="completed">✅ Завершённые</option>
                 <option value="cancelled">❌ Отменённые</option>
             </select>
-            <input type="text" id="search-input" placeholder="🔍 Поиск по имени или телефону..." style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; width: 250px;" onkeyup="filterLeads()">
+            <input type="text" id="search-input" placeholder="🔍 Поиск по имени, телефону, email..." style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; width: 250px;" onkeyup="filterLeads()">
             <button class="btn btn-outline" onclick="resetFilters()">Сбросить</button>
         </div>
         
         <!-- Таблица заявок -->
-<div class="table-wrapper">
-    <table style="width: 100%;">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Клиент</th>
-                <th>Телефон</th>
-                <th>Email</th>
-                <th>Сумма</th>
-                <th>Статус</th>
-                <th>Доставка</th>
-                <th>Оплата</th>
-                <th>Дата</th>
-                <th>Действия</th>
-            </tr>
-        </thead>
-        <tbody id="leads-table-body">
-            <tr><td colspan="10">Загрузка...</td></tr>
-        </tbody>
-    </table>
-</div>
-
-<!-- Блок пагинации -->
-<div id="pagination-container" style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 12px;">
-    <div style="font-size: 13px; color: #666;">
-        Показано <span id="pagination-start">0</span> - <span id="pagination-end">0</span> из <span id="pagination-total">0</span> заявок
-    </div>
-    <div style="display: flex; gap: 8px;">
-        <button id="prev-page" class="btn btn-outline btn-sm" onclick="changePage(-1)" disabled>◀ Назад</button>
-        <span id="page-numbers" style="display: flex; gap: 6px;"></span>
-        <button id="next-page" class="btn btn-outline btn-sm" onclick="changePage(1)">Вперед ▶</button>
-    </div>
-    <div>
-        <select id="per-page-select" class="btn btn-outline btn-sm" onchange="changePerPage()" style="padding: 6px 12px;">
-            <option value="5">5 на странице</option>
-            <option value="10" selected>10 на странице</option>
-            <option value="20">20 на странице</option>
-            <option value="50">50 на странице</option>
-        </select>
-    </div>
-</div>
+        <div class="table-wrapper" style="overflow-x: auto;">
+            <table style="width: 100%; min-width: 1200px;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ФИО</th>
+                        <th>Телефон</th>
+                        <th>Email</th>
+                        <th>Товары</th>
+                        <th>Доставка</th>
+                        <th>Адрес</th>
+                        <th>Сумма</th>
+                        <th>Статус</th>
+                        <th>Оплата</th>
+                        <th>Дата/Время</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="leads-table-body">
+                    <tr><td colspan="12">Загрузка...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Блок пагинации -->
+        <div id="pagination-container" style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 12px;">
+            <div style="font-size: 13px; color: #666;">
+                Показано <span id="pagination-start">0</span> - <span id="pagination-end">0</span> из <span id="pagination-total">0</span> заявок
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button id="prev-page" class="btn btn-outline btn-sm" onclick="changePage(-1)" disabled>◀ Назад</button>
+                <span id="page-numbers" style="display: flex; gap: 6px;"></span>
+                <button id="next-page" class="btn btn-outline btn-sm" onclick="changePage(1)">Вперед ▶</button>
+            </div>
+            <div>
+                <select id="per-page-select" class="btn btn-outline btn-sm" onchange="changePerPage()" style="padding: 6px 12px;">
+                    <option value="5">5 на странице</option>
+                    <option value="10" selected>10 на странице</option>
+                    <option value="20">20 на странице</option>
+                    <option value="50">50 на странице</option>
+                </select>
+            </div>
+        </div>
     </main>
     
     <!-- Модальное окно для редактирования/добавления заявки -->
     <div id="lead-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 700px;">
             <div class="modal-header">
                 <h3 id="modal-title">Новая заявка</h3>
                 <span class="modal-close" onclick="closeModal()">&times;</span>
             </div>
-            <div id="modal-body">
-                <!-- Форма будет вставлена через JS -->
-            </div>
+            <div id="modal-body"></div>
         </div>
     </div>
     
